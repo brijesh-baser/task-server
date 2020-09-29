@@ -23,7 +23,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "jhi_user")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "user")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "task_user")
 public class User extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

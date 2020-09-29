@@ -12,6 +12,7 @@ import org.concept.task.service.dto.UserDTO;
 
 import io.github.jhipster.security.RandomUtil;
 
+import org.concept.task.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -287,6 +288,18 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+    }
+
+    public org.concept.task.domain.dto.UserDTO getLoginUser() {
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        if(login == null || login.isEmpty()) {
+            throw new BadRequestAlertException("Please login before using api", "User", "login.failed");
+        }
+        User user = userRepository.findOneByLogin(login).orElse(null);
+        if(user == null) {
+            throw new BadRequestAlertException("No user exists", "User", "user.notFound");
+        }
+        return new org.concept.task.domain.dto.UserDTO().id(user.getId()).login(user.getLogin());
     }
 
 }
