@@ -60,4 +60,6 @@ public interface TaskService {
     Page<Task> getPendingTask(String query, Pageable pageable);
 
     Page<Task> getCompletedTask(String query, Pageable pageable);
+
+    Page<Task> getNotStartedTask(String query, Pageable pageable);
 }

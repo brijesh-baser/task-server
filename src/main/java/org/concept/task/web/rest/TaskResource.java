@@ -195,4 +195,20 @@ public class TaskResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+    /**
+     * {@code SEARCH  /_search/tasks?query=:query} : search for the task corresponding
+     * to the query.
+     *
+     * @param query the query of the task search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_to-be-start/tasks")
+    public ResponseEntity<List<Task>> getNotStartedTasks(@RequestParam String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Tasks for query {}", query);
+        Page<Task> page = taskService.getNotStartedTask(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
 }

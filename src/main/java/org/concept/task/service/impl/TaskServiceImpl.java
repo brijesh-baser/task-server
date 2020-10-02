@@ -100,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
         if(login == null || login.isEmpty()) {
             throw new BadRequestAlertException("Please login before using api", "Task", "login.failed");
         }
-        return search("user.login:" + login + " AND task.status:" + TaskStatus.IN_PROGRESS + " AND " + query, pageable);
+        return search("user.login:" + login + " AND status:" + TaskStatus.IN_PROGRESS + " AND " + query, pageable);
     }
 
     @Override
@@ -109,6 +109,15 @@ public class TaskServiceImpl implements TaskService {
         if(login == null || login.isEmpty()) {
             throw new BadRequestAlertException("Please login before using api", "Task", "login.failed");
         }
-        return search("user.login:" + login + " AND task.status:" + TaskStatus.DONE + " AND " + query, pageable);
+        return search("user.login:" + login + " AND status:" + TaskStatus.DONE + " AND " + query, pageable);
+    }
+
+    @Override
+    public Page<Task> getNotStartedTask(String query, Pageable pageable) {
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        if(login == null || login.isEmpty()) {
+            throw new BadRequestAlertException("Please login before using api", "Task", "login.failed");
+        }
+        return search("user.login:" + login + " AND status:" + TaskStatus.NOT_STARTED + " AND " + query, pageable);
     }
 }

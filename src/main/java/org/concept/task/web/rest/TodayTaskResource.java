@@ -1,9 +1,14 @@
 package org.concept.task.web.rest;
 
+import io.github.jhipster.web.util.PaginationUtil;
 import org.concept.task.domain.Task;
 import org.concept.task.service.TodayTaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +25,10 @@ public class TodayTaskResource {
     }
 
     @GetMapping("/_today/tasks")
-    public ResponseEntity<List<Task>> getTodayTasks() {
-        List<Task> todayTasks = todayTaskService.getTodayTasks();
-        return ResponseEntity.ok(todayTasks);
+    public ResponseEntity<List<Task>> getTodayTasks(@RequestParam String query, Pageable pageable) {
+        Page<Task> todayTasks = todayTaskService.getTodayTasks(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), todayTasks);
+        return ResponseEntity.ok().headers(headers).body(todayTasks.getContent());
     }
 
     @PostMapping("/add-today-task/{taskId}")

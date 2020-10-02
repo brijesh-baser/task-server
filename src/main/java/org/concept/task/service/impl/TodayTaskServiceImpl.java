@@ -9,7 +9,10 @@ import org.concept.task.service.TodayTaskService;
 import org.concept.task.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +36,14 @@ public class TodayTaskServiceImpl implements TodayTaskService {
     }
 
     @Override
-    public List<Task> getTodayTasks() {
+    public Page<Task> getTodayTasks(String query, Pageable pageable) {
         LocalDate localDate = LocalDate.now();
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
-        String query = "task.user.login:" + login + " AND date:[" + localDate + " TO " + localDate + "]";
-        log.debug("getTodayTasks() query := " + query);
-        List<TaskDateMapping> taskDateMappingList = taskDateMappingService.search(query, PageRequest.of(0, 10000)).getContent();
-        return taskDateMappingList.stream().map(TaskDateMapping::getTask).collect(Collectors.toList());
+        String queryBuilder = "task.user.login:" + login + " AND date:[" + localDate + " TO " + localDate + "] AND " + query;
+        log.debug("getTodayTasks() query := " + queryBuilder);
+        Page<TaskDateMapping> taskDateMappingList = taskDateMappingService.search(queryBuilder, pageable);
+        return new PageImpl<>(taskDateMappingList.getContent().stream().map(TaskDateMapping::getTask).collect(Collectors.toList()), pageable,
+            taskDateMappingList.getTotalElements());
     }
 
     @Override
